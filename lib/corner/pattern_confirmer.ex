@@ -22,11 +22,11 @@ defmodule Corner.PatternConfirmer do
         text_match(left, right)
 
       true ->
-        # ast =
-        other_pattern_confirm(left, right)
+        ast = other_pattern_confirm(left, right)
+        # IO.inspect(ast)
         # str = Macro.to_string(ast)
         # IO.puts("L27: #{str}")
-        # ast
+        ast
     end
   end
 
@@ -44,7 +44,7 @@ defmodule Corner.PatternConfirmer do
   defp other_pattern_confirm(left, right) do
     new_left = Macro.prewalk(left, &prewalker/1)
 
-    quote do
+    quote generated: true do
       match?(unquote(new_left), unquote(right))
     end
   end

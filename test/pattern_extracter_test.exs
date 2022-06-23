@@ -1,6 +1,6 @@
-defmodule PatternDesctructureTest do
+defmodule PatternExtracterTest do
   use ExUnit.Case, async: true
-  import Corner.PatternDestructure
+  import Corner.PatternExtracter
 
   test "list_not_nest <~ list" do
     [a, b] <~ [1, 2, 3]
@@ -89,14 +89,31 @@ defmodule PatternDesctructureTest do
     a = 1
     [^a, b, c, d, e] <~ array
     assert a == 1 and b == 2 and c == 3 and d == nil and e == nil
+    [a, {b}, %{e: e}] <~ [1, {2, :ok}, %{e: 3, g: "hello"}]
+    assert a == 1 and b == 2 and e == 3
 
     quote do
       a <~ 1
     end
     |> Code.eval_quoted()
   rescue
-    e in Corner.PatternDestructure.SyntaxError ->
-      IO.inspect(e.message)
+    _e in Corner.SyntaxError ->
+      # IO.inspect(e.message)
       assert 1 == 1
+  end
+
+  test "^pattern <~ value raise error" do
+    quote do
+      ^pattern <~ [1, 2, 3]
+    end
+    |> Code.eval_quoted()
+  rescue
+    _e ->
+      # IO.inspect(_e)
+      # IO.inspect(__STACKTRACE__)
+      assert 1 == 1
+  else
+    _e ->
+      assert 1 == 2
   end
 end

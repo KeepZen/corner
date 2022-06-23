@@ -49,7 +49,6 @@ defmodule PatternConfirmerTest do
     assert t
     a = 1
     array = {1, 2}
-
     f = {^a, b} =~ array
     assert f
     t1 = 1 =~ 1
@@ -57,12 +56,6 @@ defmodule PatternConfirmerTest do
     t = {1, _} =~ {1, 2}
     assert t
 
-    f1 = 1 =~ 2
-
-    refute f1
-
-    f2 = [1, _] =~ {1, 2}
-    refute f2
     t = [1, {a, b}] =~ [1, {:ok, :b}]
     assert t
     t = %{a: a, b: b} =~ %{a: 1, b: :b}
@@ -71,9 +64,13 @@ defmodule PatternConfirmerTest do
     t = [{1, _c}, ^a] =~ [{1, :ok}, 6]
     assert t
     t = %M{name: a, age: b} =~ %__MODULE__{name: "hell", age: 1}
-    assert t == true
-
+    assert t == false
     t = %{name: a, age: b} =~ %__MODULE__{name: "hell", age: 1}
     assert t == true
+
+    f1 = 1 =~ 2
+    refute f1
+    f2 = [1, _] =~ {1, 2}
+    refute f2
   end
 end

@@ -43,6 +43,13 @@ defmodule Corner.Ast do
     {:{}, [], ast}
   end
 
+  def is_map?({atom, _meta, _kvs}) when atom in [:%, :%{}], do: true
+  def is_map?(_ast), do: false
+  def is_struct?({:%, _, _}), do: true
+  def is_struct?(_ast), do: false
+  def is_pin?({:^, _, _}), do: true
+  def is_pin?(_ast), do: false
+
   def map_keys({:%{}, _meta, key_value}) do
     key_value |> Enum.map(&elem(&1, 0))
   end

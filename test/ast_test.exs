@@ -75,4 +75,44 @@ defmodule ASTTest do
     f = M.is_composed_type?(quote do: %Str{a: 2})
     refute !f
   end
+
+  defmodule Struct do
+    defstruct name: nil
+  end
+
+  test "is_map?(v)" do
+    assert true ==
+             quote(do: %{})
+             |> M.is_map?()
+
+    assert true ==
+             quote(do: %{1 => 2})
+             |> M.is_map?()
+
+    assert true ==
+             quote(do: %{age: 2})
+             |> M.is_map?()
+
+    assert true ==
+             quote(do: %{"hello" => "world", :ok => 1, age: 1})
+             |> M.is_map?()
+
+    assert true ==
+             quote(do: %Struct{})
+             |> M.is_map?()
+
+    assert false ==
+             quote(do: {:a, :b, :c})
+             |> M.is_map?()
+  end
+
+  test "is_struct?(ast)" do
+    assert true ==
+             quote(do: %Strct{})
+             |> M.is_struct?()
+
+    assert false ==
+             quote(do: %{})
+             |> M.is_struct?()
+  end
 end
