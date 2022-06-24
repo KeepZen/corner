@@ -116,4 +116,20 @@ defmodule PatternExtracterTest do
     _e ->
       assert 1 == 2
   end
+
+  test "badmatch <~ value" do
+    quote do
+      {a, [b, c]} <~ {1, 2, 3}
+    end
+    |> Code.eval_quoted()
+  rescue
+    e ->
+      IO.inspect(e)
+      # IO.inspect(__STACKTRACE__)
+      assert 1 == 1
+  else
+    _v ->
+      # IO.inspect(_v)
+      assert 1 == 2
+  end
 end
