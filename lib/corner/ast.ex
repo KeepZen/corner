@@ -61,4 +61,11 @@ defmodule Corner.Ast do
   def make_map(keys, values) do
     {:%{}, [], Enum.zip(keys, values)}
   end
+
+  def get_args([:when, _, args]) do
+    {_, args} = List.pop_at(args, -1)
+    args
+  end
+
+  def get_args(ast) when is_list(ast), do: ast
 end
