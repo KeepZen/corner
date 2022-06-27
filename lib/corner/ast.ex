@@ -62,10 +62,64 @@ defmodule Corner.Ast do
     {:%{}, [], Enum.zip(keys, values)}
   end
 
-  def get_args([:when, _, args]) do
+  def get_args([{:when, _, args}]) do
     {_, args} = List.pop_at(args, -1)
     args
   end
 
   def get_args(ast) when is_list(ast), do: ast
+
+  @doc """
+  Check if the clauses have the same arity.
+  If all caluses have some arity, return `{:ok, arity}`,
+  else return `:error`.
+  """
+  def clauses_arity_check([{:->, _, [args | _]} | others]) do
+    args = get_args(args)
+    check_args_length(others, length(args))
+  end
+
+  defp check_args_length([], len) do
+    {:ok, len}
+  end
+
+  defp check_args_length([{:->, _, [args | _]} | others], len) do
+    args = get_args(args)
+
+    if len == length(args) do
+      check_args_length(others, len)
+    else
+      :error
+    end
+  end
+
+  def make_recursive_fn(name, body, correct_args_fun) do
+    new_body = Enum.map(body, &clause_handler(correct_args_fun, name, &1))
+    {:fn, [], new_body}
+  end
+
+  defp clause_handler(
+         correct_args_fun,
+         name_ast = {atom, _, _},
+         {:->, meta, [args | body]}
+       ) do
+    new_body = Macro.postwalk(body, &correct_recursive_call(atom, &1))
+
+    new_args =
+      if new_body != body do
+        correct_args_fun.(args, name_ast)
+      else
+        name_atom = "_#{atom}" |> String.to_atom()
+        correct_args_fun.(args, {name_atom, [], nil})
+      end
+
+    {:->, meta, [new_args | new_body]}
+  end
+
+  # ast of `atom.(...args)` -> ast of `atom.(atom, ...args)`.
+  defp correct_recursive_call(atom, {{:., m1, [{atom, _, _} = fun]}, m2, args}) do
+    {{:., m1, [fun]}, m2, [fun | args]}
+  end
+
+  defp correct_recursive_call(_, ast), do: ast
 end

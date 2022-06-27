@@ -11,5 +11,13 @@ defmodule FnTest do
     assert is_function(sum_one_to, 1)
     assert sum_one_to.(10) === 1..10 |> Enum.sum()
     assert sum_one_to.(100) === 5050
+
+    fn! produce_one_to do
+      1, acc -> acc
+      n, acc -> produce_one_to.(n - 1, n * acc)
+    end
+
+    assert produce_one_to.(3, 1) == 6
+    assert is_function(produce_one_to, 2)
   end
 end
