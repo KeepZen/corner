@@ -1,11 +1,12 @@
 defmodule PromiseTest do
-  use ExUnit.Case, async: true
+  # , async: true
+  use ExUnit.Case
   alias Corner.Promise
 
   setup_all do
-    fun = fn number, reslove, reject ->
+    fun = fn number, resolve, reject ->
       cond do
-        number > 0 -> reslove.(number)
+        number > 0 -> resolve.(number)
         number < 0 -> reject.(number)
         true -> raise "Bad zero"
       end
@@ -14,17 +15,20 @@ defmodule PromiseTest do
     %{fun: fun}
   end
 
-  test "Promise.reslove(v)" do
+  test "Promise.resolve(v)" do
+    IO.puts("18")
     p = Promise.resolve(10)
     assert p.state == :pending
   end
 
   test "Promise.reject(v)" do
+    IO.puts("24")
     p = Promise.reject(10)
     assert p.state == :pending
   end
 
   test "Promise.of/2" do
+    IO.puts("30")
     p = Promise.of(100)
     assert p.state == :pending
     p = Promise.of(100, :rejected)
@@ -32,6 +36,7 @@ defmodule PromiseTest do
   end
 
   test "Promise.new(fun/2)", %{fun: fun} do
+    IO.puts("38")
     %{state: state} = Promise.new(&fun.(10, &1, &2))
     assert state == :pending
     %{state: state} = Promise.new(&fun.(-10, &1, &2))
@@ -41,6 +46,7 @@ defmodule PromiseTest do
   end
 
   test "Promise.await(p)", %{fun: fun} do
+    IO.puts("48")
     p = Promise.new(&fun.(10, &1, &2)) |> Promise.await()
     assert {:resolved, 10} == p
 
@@ -53,12 +59,13 @@ defmodule PromiseTest do
 
     # IO.inspect("=========", label: __ENV__.file <> ":#{__ENV__.line}")
     assert {:resolved, 1} = Promise.resolve(1) |> Promise.await()
-    {tag, pid} = Promise.new(fn _, _ -> :ok end) |> Promise.await(5_00)
-    assert tag == :timeout
-    assert is_pid(pid)
+    {tag, v} = Promise.new(fn _, _ -> :ok end) |> Promise.await()
+    assert tag == :stop
+    assert v == :done
   end
 
   test "Promise.map(fun/1)", %{fun: fun} do
+    IO.puts("67")
     p = Promise.new(&fun.(10, &1, &2)) |> Promise.map(fn v -> v + 1 end)
     assert is_struct(p, Promise)
     assert p.state == :pending
@@ -87,6 +94,8 @@ defmodule PromiseTest do
   end
 
   test "Promise.then(fun1/1,fun2/1)", %{fun: fun} do
+    IO.puts("96")
+
     {tag, v} =
       Promise.new(&fun.(10, &1, &2))
       |> Promise.then(
@@ -139,6 +148,8 @@ defmodule PromiseTest do
   end
 
   test "Promise.then(fun/1)", %{fun: fun} do
+    IO.puts("150")
+
     {tag, v} =
       Promise.new(&fun.(10, &1, &2))
       |> Promise.then(fn v ->
@@ -174,6 +185,8 @@ defmodule PromiseTest do
   end
 
   test "Promise.on_error(fun/1)", %{fun: fun} do
+    IO.puts("187")
+
     {tag, v} =
       Promise.new(&fun.(-10, &1, &2))
       |> Promise.on_error(fn v ->
