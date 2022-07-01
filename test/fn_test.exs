@@ -1,5 +1,6 @@
 defmodule FnTest do
   use ExUnit.Case, async: true
+  doctest Corner.Fn
   import Corner.Fn
 
   test "fn! sum_one_to(n)" do

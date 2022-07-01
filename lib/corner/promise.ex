@@ -1,4 +1,9 @@
 defmodule Corner.Promise do
+  @moduledoc """
+  The Promise in Elixir.
+  
+  Smarily as Promise in Javascript.
+  """
   use GenServer
 
   @opaque t :: %__MODULE__{
@@ -14,6 +19,7 @@ defmodule Corner.Promise do
   @receive_time 60 * 1000
   @doc """
   Dynamic create a new promise with `fun`.
+  
   The spectype of `fun` is `(resolver,rejecter)-> any`.
   + When `resolver` is call, promise will turn to `:resolved`.
   + When `rejecter` is call, promise will turn to `:rejected`.
@@ -64,6 +70,8 @@ defmodule Corner.Promise do
   @type error_handler :: rejecte_then() | error_then()
 
   @doc """
+  Transform the data or hanlde the error.
+  
   + `then/2`: Transform the data with `fun1`, but if on error,
   hanlder error whith `fun2`.
   + `then/1`: Transform the data with `fun1`, if promise on error,
@@ -80,24 +88,33 @@ defmodule Corner.Promise do
 
   @doc """
   Trasform the state of promise with `fun`.
+  
   + If promise's state on `:resolved` or `:rejected`, `fun` get the value of promise.
   + On `:error`, `fun` get `{:error, {any, []}}`
   """
   @spec map(t, resolve_then() | error_handler()) :: t
-  def map(%__MODULE__{} = this, fun) when is_function(fun, 1) do
-    async_send_run(this, fun, fun)
+  def map(%__MODULE__{} = promise, fun) when is_function(fun, 1) do
+    async_send_run(promise, fun, fun)
   end
 
+  @doc """
+  Add a error handelr for promise.
+  """
   @spec on_error(t, error_handler) :: t
-  def on_error(%__MODULE__{} = this, fun) when is_function(fun, 1) do
-    async_send_run(this, nil, fun)
+  def on_error(%__MODULE__{} = promise, fun) when is_function(fun, 1) do
+    async_send_run(promise, nil, fun)
   end
 
   @type tag :: :resolved | :rejected | :error | :stop
+  @doc """
+  Get value from `promise`.
+  
+  Return `{tag, value}`, where tag is `:resolved | :rejected | :error | :stop`.
+  """
   @spec await(t) :: {tag, any}
-  def await(%{} = this) do
-    if Process.alive?(this.pid) do
-      send(this.pid, {:await, self()})
+  def await(%{pid: pid}) do
+    if Process.alive?(pid) do
+      send(pid, {:await, self()})
 
       receive do
         {:result, message} -> message
@@ -106,15 +123,6 @@ defmodule Corner.Promise do
       end
     else
       {:stop, :done}
-    end
-  end
-
-  def set_receive_time(%__MODULE__{pid: pid} = p, time) when time > 0 do
-    if Process.alive?(p.pid) do
-      GenServer.cast(pid, {:set_receive_time, time})
-      p
-    else
-      %{p | state: :stop}
     end
   end
 

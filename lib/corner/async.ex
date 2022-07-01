@@ -1,4 +1,29 @@
 defmodule Corner.Async do
+  @moduledoc """
+  This Module can be use to define the async function.
+  
+  A async function return a `Promise`.
+  
+  About the `Promise` see more at `Corner.Promise`.
+  ## Example
+  ```
+  iex> defmodule AsyncFunction do
+  ...>   import Corner.Async
+  ...>   async def sum(a,b) do
+  ...>     a + b
+  ...>   end
+  ...> end
+  iex> alias Corner.Promise
+  iex> v = AsyncFunction.sum(1,2)
+  iex> is_struct(v, Promise)
+  iex> true
+  iex> Promise.await(v)
+  iex> {:ok, 3}
+  ```
+  """
+  @doc """
+  async support for `fn`.
+  """
   defmacro async({:fn, meta, ast}) do
     new_ast = arrow_return_promise(ast)
 
@@ -6,6 +31,11 @@ defmodule Corner.Async do
     # |> tap(&(Macro.to_string(&1) |> IO.puts()))
   end
 
+  @doc """
+  async for `def`, `defp` or `defgen`.
+  
+  About `defgen` see `Corner.Generater`.
+  """
   defmacro async({atom, _meta, args}, do: body) when atom in [:def, :defp] do
     new_body = return_promise(body)
 

@@ -1,5 +1,6 @@
 defmodule PatternExtracterTest do
   use ExUnit.Case, async: true
+  doctest Corner.PatternExtracter
   import Corner.PatternExtracter
 
   test "list_not_nest <~ list" do

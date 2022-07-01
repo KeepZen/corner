@@ -1,8 +1,16 @@
 defmodule Corner.Try do
+  @moduledoc """
+  Define macro `try!/1`.
+  
+  `try!/1` is similarly as `try/1`, but in the `rescue` caluses of `try!/1`,
+  the pattern match not just by name, but have the full power of  pattern match,
+  juse like in the caluses of `case`.
+  """
   defmacro try!(asts) do
     Macro.postwalk(asts, &walker/1)
     |> make_try()
-    |> tap(&(Macro.to_string(&1) |> IO.puts()))
+
+    # |> tap(&(Macro.to_string(&1) |> IO.puts()))
   end
 
   # tramseform

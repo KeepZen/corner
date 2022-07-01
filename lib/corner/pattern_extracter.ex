@@ -1,4 +1,21 @@
 defmodule Corner.PatternExtracter do
+  @moduledoc """
+  This module can help to extracte value base on pattern.
+
+  This module define macro `<~/2`. We can use it extract value base on pattern.
+
+  ## Example
+  ```
+  iex> import Corner.PatternExtracter
+  iex> {:ok, [a,b,c]} <~ {:ok, [1]}
+  iex> a
+  iex> 1
+  iex> b
+  iex> nil
+  iex> c
+  iex> nil
+  ```
+  """
   alias Corner.{Ast, SyntaxError, Tuple}
   alias __MODULE__.Helpers
 

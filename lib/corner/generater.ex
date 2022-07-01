@@ -1,8 +1,42 @@
 defmodule Corner.Generater do
+  @moduledoc """
+  This module define macro `defgen/2`.
+  
+  `defgen` use to define generater in elixir.
+  
+  In the context of the `defgen` you can use keyword
+  `yield` to return a value and stop execute, like it is in Javascript or lua.
+  
+  ## Example
+  ```
+  iex> import Corner.Generater
+  iex> defgen my_generater do
+  ...>  a, b ->
+  ...>    yield a
+  ...>    yield b
+  ...>    yield a + b
+  ...> end
+  iex> g = my_generater.(1,2)
+  iex> for t <- g do
+  ...>  t
+  ...> end
+  iex> [1,2,3]
+  ```
+  """
   defstruct ref: nil, pid: nil, async: false
   alias Corner.Ast
+  defmacro defgen(name, do_block)
 
-  defmacro defgen(name, async \\ false, do: block) do
+  defmacro defgen(name, do: block) do
+    do_defgen(name, false, block)
+  end
+
+  @doc false
+  defmacro defgen(name, async, do: block) do
+    do_defgen(name, async, block)
+  end
+
+  defp do_defgen(name, async, block) do
     case Ast.clauses_arity_check(block) do
       {:ok, arity} ->
         tem_fun = {:TEM_fun, [], nil}
@@ -12,7 +46,6 @@ defmodule Corner.Generater do
         quote do
           unquote(name) = fn unquote_splicing(params) ->
             unquote(tem_fun) = unquote(tem_fun_ast)
-            # async = unquote(async)
             me = self()
 
             ref = make_ref()
@@ -38,9 +71,12 @@ defmodule Corner.Generater do
     end
   end
 
-  def next(%__MODULE__{} = m, v \\ nil) do
-    if running?(m) do
-      %{pid: pid, ref: ref} = m
+  @doc """
+  Get next value form the generater `g`.
+  """
+  def next(%__MODULE__{} = g, v \\ nil) do
+    if running?(g) do
+      %{pid: pid, ref: ref} = g
       send(pid, v)
 
       receive do
@@ -52,11 +88,17 @@ defmodule Corner.Generater do
     end
   end
 
+  @doc """
+  Check if the `generater` is still running.
+  """
   def running?(%__MODULE__{pid: pid}) do
     pid && Process.alive?(pid)
   end
 
-  def done?(%__MODULE__{} = m), do: !running?(m)
+  @doc """
+  Check if the `generater` is done.
+  """
+  def done?(%__MODULE__{} = generater), do: !running?(generater)
 
   @pid {:pid, [], nil}
   @ref {:ref, [], nil}

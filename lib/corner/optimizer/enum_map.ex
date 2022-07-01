@@ -1,4 +1,5 @@
 defmodule Corner.Optimizer.EnumMap do
+  @moduledoc false
   alias Corner.Optimizer
   @behaviour Optimizer
 

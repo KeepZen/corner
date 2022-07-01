@@ -1,4 +1,11 @@
 defmodule Corner.PatternConfirmer do
+  @moduledoc """
+  Pattern Confirmer.
+  
+  Define the macro `=~/2`, use to confirmer if a value match a pattern.
+  
+  Please use it as: `use Corner.PatternConfirmer`.
+  """
   import Kernel, except: [=~: 2]
   alias Corner.Ast
 
@@ -9,6 +16,11 @@ defmodule Corner.PatternConfirmer do
     end
   end
 
+  @doc """
+  Check if `left` have the pattern of `right`.
+  
+  If `left` is a binary or a variable, it will same as `Kerner.=~/2`.
+  """
   defmacro left =~ right do
     cond do
       is_binary(left) ->

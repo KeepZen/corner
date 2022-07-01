@@ -1,4 +1,5 @@
 defmodule Corner.Optimizer.Pipe do
+  @moduledoc false
   import Kernel, except: [|>: 2]
   alias Corner.Optimizer.{EnumMap}
   @optimizer [EnumMap]

@@ -1,5 +1,6 @@
 defmodule GeneraterTest do
   use ExUnit.Case, async: true
+  doctest Corner.Generater
   import Corner.Generater
 
   test "defgen create fn" do

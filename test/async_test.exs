@@ -1,5 +1,6 @@
 defmodule AsyncTest do
   use ExUnit.Case, async: true
+  doctest Corner.Async
   import Corner.Async
 
   test "asyn defgen" do
