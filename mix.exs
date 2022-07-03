@@ -4,7 +4,7 @@ defmodule Corner.MixProject do
   def project do
     [
       app: :corner,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -14,20 +14,20 @@ defmodule Corner.MixProject do
         # The main page in the docs
         # main: "MyApp",
         # logo: "path/to/logo.png",
-        extras: [
-          # "../ch01.intruction.md",
-          # "../ch02.plus_and_minus.md",
-          # "../ch03.pattern_match.md",
-          # "../ch04.parenthese.md",
-          # "../ch05.new_constructor.md",
-          # "../ch06.async_programe.md",
-          # "../ch07.pipe.md",
-          # "../ch08.error_handle.md",
-          # "../ch09.module.md",
-          # "../ch10.protocol_and_behaviour.md",
-          # "../ch11.macro.md",
-          # "../ch12.cold_knowledge.md"
-        ]
+        # extras: [
+        #   "../ch01.intruction.md",
+        #   "../ch02.plus_and_minus.md",
+        #   "../ch03.pattern_match.md",
+        #   "../ch04.parenthese.md",
+        #   "../ch05.new_constructor.md",
+        #   "../ch06.async_programe.md",
+        #   "../ch07.pipe.md",
+        #   "../ch08.error_handle.md",
+        #   "../ch09.module.md",
+        #   "../ch10.protocol_and_behaviour.md",
+        #   "../ch11.macro.md",
+        #   "../ch12.cold_knowledge.md"
+        # ]
       ]
     ]
   end

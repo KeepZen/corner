@@ -34,11 +34,7 @@ defmodule Corner.PatternConfirmer do
         text_match(left, right)
 
       true ->
-        ast = other_pattern_confirm(left, right)
-        # IO.inspect(ast)
-        # str = Macro.to_string(ast)
-        # IO.puts("L27: #{str}")
-        ast
+        other_pattern_confirm(left, right)
     end
   end
 
@@ -61,7 +57,8 @@ defmodule Corner.PatternConfirmer do
     end
   end
 
-  defp prewalker({atom, meta, args}) when atom in [:^, :%{}, :%, :{}] do
+  @excluded_atom [:^, :%{}, :%, :{}]
+  defp prewalker({atom, meta, args}) when atom in @excluded_atom do
     args =
       Enum.map(
         args,
@@ -69,7 +66,7 @@ defmodule Corner.PatternConfirmer do
           {atom, meta, value} ->
             {atom, [:exclude | meta], value}
 
-          {atom, other} when atom not in [:^, :%{}, :%, :{}] ->
+          {atom, other} when atom not in @excluded_atom ->
             {atom, prewalker(other)}
         end
       )
