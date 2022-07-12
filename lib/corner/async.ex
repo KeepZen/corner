@@ -5,24 +5,21 @@ defmodule Corner.Async do
   A async function return a `Promise`.
   
   About the `Promise` see more at `Corner.Promise`.
-  ## Example
-  ```
-  iex> defmodule AsyncFunction do
-  ...>   import Corner.Async
-  ...>   async def sum(a,b) do
-  ...>     a + b
-  ...>   end
-  ...> end
-  iex> alias Corner.Promise
-  iex> v = AsyncFunction.sum(1,2)
-  iex> is_struct(v, Promise)
-  iex> true
-  iex> Promise.await(v)
-  iex> {:ok, 3}
-  ```
   """
+
   @doc """
   async support for `fn`.
+  
+  ## Example
+  ```elixir
+  iex> import Corner.Async, only: [async: 1]
+  iex> f = async fn a, b -> a + b end
+  iex> p = f.(1,2)
+  iex> is_struct(p, Corner.Promise)
+  true
+  iex> Corner.Promise.await(p)
+  {:resolved, 3}
+  ```
   """
   defmacro async({:fn, meta, ast}) do
     new_ast = arrow_return_promise(ast)
@@ -35,6 +32,22 @@ defmodule Corner.Async do
   async for `def`, `defp` or `defgen`.
   
   About `defgen` see `Corner.Generater`.
+  
+  ## Example
+  ```
+  iex> defmodule AsyncFunction do
+  ...>   import Corner.Async
+  ...>   async def sum(a,b) do
+  ...>     a + b
+  ...>   end
+  ...> end
+  iex> alias Corner.Promise
+  iex> v = AsyncFunction.sum(1,2)
+  iex> is_struct(v, Promise)
+  true
+  iex> Promise.await(v)
+  {:resolved, 3}
+  ```
   """
   defmacro async({atom, _meta, args}, do: body) when atom in [:def, :defp] do
     new_body = return_promise(body)
@@ -42,11 +55,15 @@ defmodule Corner.Async do
     case atom do
       :def ->
         quote do
+          alias Corner.Promise
+          import Corner.Promise, only: [await: 1]
           def(unquote_splicing(args), do: unquote(new_body))
         end
 
       :defp ->
         quote do
+          alias Corner.Promise
+          import Corner.Promise, only: [await: 1]
           defp(unquote_splicing(args), do: unquote(new_body))
         end
     end
@@ -79,7 +96,7 @@ defmodule Corner.Async do
           if is_struct(v, Corner.Promise) do
             v
           else
-            Corner.Promise.reject(v)
+            Corner.Promise.resolve(v)
           end
       end
     end
