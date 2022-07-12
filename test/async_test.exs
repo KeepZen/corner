@@ -20,4 +20,12 @@ defmodule AsyncTest do
 
     assert [3, 2, 1] == list
   end
+
+  test "async fn" do
+    f = async(fn a, b -> a + b end)
+    assert is_function(f, 2)
+    p = f.(1, 2)
+    t = Corner.Promise.await(p)
+    assert {:resolved, 3} == t
+  end
 end

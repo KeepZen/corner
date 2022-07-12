@@ -10,13 +10,13 @@ defmodule Corner.Tuple do
   ```
   iex> alias Corner.Tuple, as: T
   iex> T.padding({}, 2)
-  iex> {nil,nil}
+  {nil,nil}
   iex> T.padding({:a}, 1, value: 1)
-  iex> {:a, 1}
+  {:a, 1}
   iex> T.padding({:b}, 1,value: 1, at: :head)
-  iex> {1,:b}
+  {1,:b}
   iex> T.padding({:c}, 2, value: :e, at: :tail)
-  iex> {:c, :e,:e}
+  {:c, :e,:e}
   ```
   """
   def padding(t, number, opt \\ [])
@@ -49,8 +49,9 @@ defmodule Corner.Tuple do
   ```
   iex> alias Corner.Tuple,as: T
   iex> T.drop({:droped, :other}, 1, at: :head)
-  iex> {:other}
+  {:other}
   iex> T.drop({:keep, :droped, :deopred_also}, 2)
+  {:keep}
   ```
   """
   def drop(tuple, number, at_option \\ [at: :tail])

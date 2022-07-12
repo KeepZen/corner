@@ -23,7 +23,7 @@ defmodule Corner.Rename do
   ...>   end
   ...> end
   iex> M.test()
-  iex> true
+  true
   ```
   """
   defmacro rename(fun, to: new_name) do

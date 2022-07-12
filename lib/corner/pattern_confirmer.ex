@@ -12,7 +12,7 @@ defmodule Corner.PatternConfirmer do
   defmacro __using__(_opt) do
     quote do
       import Kernel, except: [=~: 2]
-      import Corner.PatternConfirmer, only: [=~: 2]
+      import Corner.PatternConfirmer, only: [=~: 2], warn: false
     end
   end
 

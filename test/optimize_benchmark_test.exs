@@ -26,7 +26,7 @@ defmodule OptimizeBenchmarkTest do
     task2 = Task.async(fn -> :timer.tc(&fun2/1, arg) end)
 
     [{t, v}, {t1, v1}] = Task.await_many([task1, task2], 60_000)
-    IO.puts("speed up #{(t - t1) / t1 * 100}%.")
+    IO.puts("After Optimize Enum.map speed up #{(t - t1) / t1 * 100}%.")
     assert v == v1
   end
 end

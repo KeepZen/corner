@@ -11,13 +11,14 @@ defmodule Corner.Require do
   ```elixir
   import Corner.Require
   defmodule M.A do
-    def hello, do: :hello
+    #... Code
   end
   require! M.A
   A == M.A
   true
   require! M.A, as: B
-  B = M.A and A = B
+  B == M.A and A == B
+  false
   ```
   """
   defmacro require!(module) do

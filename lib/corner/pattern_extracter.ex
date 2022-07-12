@@ -9,11 +9,11 @@ defmodule Corner.PatternExtracter do
   iex> import Corner.PatternExtracter
   iex> {:ok, [a,b,c]} <~ {:ok, [1]}
   iex> a
-  iex> 1
+  1
   iex> b
-  iex> nil
+  nil
   iex> c
-  iex> nil
+  nil
   ```
   """
   alias Corner.{Ast, SyntaxError, Tuple}

@@ -20,7 +20,7 @@ defmodule Corner.Generater do
   iex> for t <- g do
   ...>  t
   ...> end
-  iex> [1,2,3]
+  [1,2,3]
   ```
   """
   defstruct ref: nil, pid: nil, async: false

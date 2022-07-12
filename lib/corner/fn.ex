@@ -4,15 +4,6 @@ defmodule Corner.Fn do
   
   `fn!/2` can be use to define recursivable anonymous function.
   
-  ## Example
-  ```
-  iex> import Corner.Fn
-  iex> fn! sum_to do
-  ...>   0 -> 0
-  ...>  n when is_integer(n) and n > 0  -> n + sum_to.(n - 1)
-  ...> end
-  iex> sum_to.(100)
-  iex> 5050
   ```
   """
   alias Corner.{SyntaxError, Ast}
@@ -25,6 +16,18 @@ defmodule Corner.Fn do
   `block` is the caluses of the function, same as in `fn`.
   
   This macro will inject variable `name` to caller's context.
+  
+  ## Example
+  ```
+  iex> import Corner.Fn
+  iex> fn! sum_to do
+  ...>   0 -> 0
+  ...>  n when is_integer(n) and n > 0  -> n + sum_to.(n - 1)
+  ...> end
+  iex> sum_to.(100)
+  5050
+  iex> :sum_to in (binding() |> Keyword.keys())
+  true
   """
   defmacro fn!(name, do: block) do
     case Ast.clauses_arity_check(block) do
