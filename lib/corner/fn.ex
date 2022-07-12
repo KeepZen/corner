@@ -4,7 +4,6 @@ defmodule Corner.Fn do
   
   `fn!/2` can be use to define recursivable anonymous function.
   
-  ```
   """
   alias Corner.{SyntaxError, Ast}
 
@@ -28,6 +27,7 @@ defmodule Corner.Fn do
   5050
   iex> :sum_to in (binding() |> Keyword.keys())
   true
+  ```
   """
   defmacro fn!(name, do: block) do
     case Ast.clauses_arity_check(block) do
