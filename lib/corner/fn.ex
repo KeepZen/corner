@@ -29,6 +29,8 @@ defmodule Corner.Fn do
   true
   ```
   """
+  defmacro fn!(name, do_block)
+
   defmacro fn!(name, do: block) do
     case Ast.clauses_arity_check(block) do
       {:ok, arity} ->
