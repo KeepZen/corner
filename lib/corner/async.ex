@@ -5,7 +5,31 @@ defmodule Corner.Async do
   A async function return a `Promise`.
   
   About the `Promise` see more at `Corner.Promise`.
+  
+  `use/1` will inject `alias Corner.Promise` and
+  `import Promise, only: [await: 1]`, `import Corner.Async`.
+  
+  ## Example
+  ```elixir
+  iex> use Corner.Async
+  iex> fun = async fn a,b -> a + b end
+  iex> is_function(fun,2)
+  true
+  iex> p = fun.(1,2)
+  iex> is_struct(p, Promise)
+  true
+  iex> await p
+  {:resolved, 3}
+  ```
   """
+
+  defmacro __using__(_opt) do
+    quote location: :keep do
+      alias Corner.Promise
+      import Promise, only: [await: 1]
+      import unquote(__MODULE__), only: [async: 1, async: 2]
+    end
+  end
 
   @doc """
   async support for `fn`.

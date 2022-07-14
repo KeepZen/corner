@@ -4,8 +4,38 @@ defmodule Corner.Try do
   
   `try!/1` is similarly as `try/1`, but in the `rescue` caluses of `try!/1`,
   the pattern match not just by name, but have the full power of  pattern match,
-  juse like in the caluses of `case`.
+  just like in the caluses of `case`.
   """
+  @doc """
+  Enhance the `rescue` caluse.
+  
+  `try!/1` will traseform the code:
+  ```elixir
+  rescue
+    %ErrorType1{filed: filed} -> filed
+    %ErrorType2{filed_name: filed} -> filed
+  ```
+  to:
+  ```elixir
+  rescue
+     v -> case v do
+      %MatchError{term: term} -> term
+      %Error2{field: f} -> v
+  ```
+  
+  ## Example
+  ```elixir
+  iex> import Corner.Try, only: [try!: 1]
+  iex> try! do
+  ...>   {:ok, 1} = {:bad, 1}
+  ...> rescue
+  ...>  %MatchError{term: term} -> term
+  ...> end
+  {:bad,1}
+  ```
+  """
+  defmacro try!(do_block)
+
   defmacro try!(asts) do
     Macro.postwalk(asts, &walker/1)
     |> make_try()
@@ -23,14 +53,14 @@ defmodule Corner.Try do
   #    v -> case v do
   #     %MatchError{term: term} -> term
   #     %Error2{field: f} -> v
-  #    end
+  # `
   defp walker({:rescue, rescue_block}) do
     {:rescue,
      [
        {:->, [],
         [
-          [{:v, [], nil}],
-          {:case, [], [{:v, [], nil}, [do: rescue_block]]}
+          [{:V, [], nil}],
+          {:case, [], [{:V, [], nil}, [do: rescue_block]]}
         ]}
      ]}
   end

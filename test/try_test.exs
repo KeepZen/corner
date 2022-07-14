@@ -6,7 +6,7 @@ defmodule Maybe do
       try! do
         unquote(block)
       rescue
-        %MatchError{term: term} -> term
+        %MatchError{term: term} -> {term, binding[:V]}
       else
         unquote(else_block)
       end
@@ -17,6 +17,7 @@ end
 
 defmodule TryTest do
   use ExUnit.Case
+  doctest Corner.Try
 
   test "try" do
     import Maybe
@@ -30,6 +31,6 @@ defmodule TryTest do
         [a, b] -> [a, b]
       end
 
-    assert [1, 2] == t
+    assert {[1, 2], %MatchError{term: [1, 2]}} == t
   end
 end
