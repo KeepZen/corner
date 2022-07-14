@@ -4,6 +4,7 @@ defmodule Corner.Promise do
   
   Smarily as Promise in Javascript.
   """
+  @doc false
   use GenServer
 
   @opaque t :: %__MODULE__{
