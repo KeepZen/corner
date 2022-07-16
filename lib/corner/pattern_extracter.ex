@@ -116,6 +116,7 @@ defmodule Corner.PatternExtracter do
   end
 
   defmodule Helpers do
+    @moduledoc false
     def split_nest_pattern(ast, fun) do
       {var_patterns, map} = change_composed_pattern_to_variable(ast)
 
