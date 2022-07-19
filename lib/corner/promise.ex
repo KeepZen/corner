@@ -65,6 +65,9 @@ defmodule Corner.Promise do
     of(v, :rejected)
   end
 
+  @typedoc """
+  The function passed to `Promise.then/1-2`.
+  """
   @type resolve_then :: (any -> any)
   @type rejecte_then :: (any -> any)
   @type error_then :: ({:error | :stop, any} -> any)
@@ -73,7 +76,7 @@ defmodule Corner.Promise do
   @doc """
   Transform the data or hanlde the error.
   
-  + `then/2`: Transform the data with `fun1`, but if on error,
+  + `then/2`: Transform the data with `fun1`, but if  promise on error,
   hanlder error whith `fun2`.
   + `then/1`: Transform the data with `fun1`, if promise on error,
   just skip the `fun1`.
@@ -90,7 +93,8 @@ defmodule Corner.Promise do
   @doc """
   Trasform the state of promise with `fun`.
   
-  + If promise's state on `:resolved` or `:rejected`, `fun` get the value of promise.
+  + If promise's state on `:resolved` or `:rejected`, `fun` get the value of
+  promise.
   + On `:error`, `fun` get `{:error, {any, []}}`
   """
   @spec map(t, resolve_then() | error_handler()) :: t
@@ -99,7 +103,7 @@ defmodule Corner.Promise do
   end
 
   @doc """
-  Add a error handelr for promise.
+  Add a error handelr for the promise.
   """
   @spec on_error(t, error_handler) :: t
   def on_error(%__MODULE__{} = promise, fun) when is_function(fun, 1) do
